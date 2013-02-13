@@ -5,10 +5,10 @@
 var server = require("./server");
 var fs = require('fs');
 
-console.log(process.env.apikey);
 var apikey = process.env.apikey || '';
+var port = process.env.PORT || 8888;
 
-server.start(apikey);
+server.start(apikey, port);
 
 /*
 fs.readFile('apikey.txt', 'ascii', function(err, data) {
