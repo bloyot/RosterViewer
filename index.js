@@ -5,6 +5,7 @@
 var server = require("./server");
 var fs = require('fs');
 
+console.log(process.env.apikey);
 var apikey = process.env.apikey || '';
 
 server.start(apikey);
