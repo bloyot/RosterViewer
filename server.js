@@ -7,7 +7,7 @@ var url = require("url");
 var result = ''; 
 var key;
 
-function start(apikey) {
+function start(apikey, port) {
     
     key = apikey;
 
@@ -54,7 +54,7 @@ function start(apikey) {
 
 	onRequest(q, r);
 
-    }).listen(8888);
+    }).listen(port);
 }
 
 exports.start = start;
