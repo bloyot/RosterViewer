@@ -4,9 +4,13 @@
 
 var https = require("https");
 var url = require("url");
+
+var ssl_options;
 var result = ''; 
 
-function start(port) {
+function start(options, port) {
+
+    ssl_options = options;
 
     function onRequest(request, response) {
 
@@ -42,7 +46,7 @@ function start(port) {
 	https.request(options, callback).end();
     }
 
-    https.createServer(function(q, r) {
+    https.createServer(ssl_options, function(q, r) {
         
         // catch the annoying favicon request
 	if (q.url === '/favicon.ico') {
