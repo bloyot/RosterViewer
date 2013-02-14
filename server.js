@@ -20,6 +20,9 @@ function start(port) {
             headers: {'Accept': 'application/json'}
 	};
 
+        console.log(options.host);
+        console.log(options.path);
+
 	callback = function(r) {
 	    var str = '';
 	    
