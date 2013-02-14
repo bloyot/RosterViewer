@@ -5,20 +5,17 @@
 var http = require("http");
 var url = require("url");
 var result = ''; 
-var key;
 
-function start(apikey, port) {
-    
-    key = apikey;
+function start(port) {
 
     function onRequest(request, response) {
 
         var query = url.parse(request.url, true).query;
-        var path = query.path + '?apikey=' + key;
+        var path = query.path; 
 
 	// make a request to espn
 	var options = {
-	    host: 'api.espn.com',
+	    host: 'https://api.twitch.tv/kraken'
             path: path,
             headers: {'Accept': 'application/json'}
 	};
