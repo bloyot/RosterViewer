@@ -15,7 +15,7 @@ function start(port) {
 
 	// make a request to espn
 	var options = {
-	    host: 'api.twitch.tv/kraken',
+	    host: 'api.twitch.tv',
             path: path,
             headers: {'Accept': 'application/json'}
 	};
