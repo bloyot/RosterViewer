@@ -2,30 +2,26 @@
 // Application: Roster Viewer
 // 2/13/13
 
-var https = require("https");
+var http = require("http");
 var url = require("url");
-
-var ssl_options;
 var result = ''; 
+var key;
 
-function start(options, port) {
-
-    ssl_options = options;
+function start(apikey, port) {
+    
+    key = apikey;
 
     function onRequest(request, response) {
 
         var query = url.parse(request.url, true).query;
-        var path = query.path; 
+        var path = query.path + '?apikey=' + key;
 
 	// make a request to espn
 	var options = {
-	    host: 'api.twitch.tv',
+	    host: 'api.espn.com',
             path: path,
             headers: {'Accept': 'application/json'}
 	};
-
-        console.log(options.host);
-        console.log(options.path);
 
 	callback = function(r) {
 	    var str = '';
@@ -43,10 +39,10 @@ function start(options, port) {
 		response.end();
 	    });
 	}
-	https.request(options, callback).end();
+	http.request(options, callback).end();
     }
 
-    https.createServer(ssl_options, function(q, r) {
+    http.createServer(function(q, r) {
         
         // catch the annoying favicon request
 	if (q.url === '/favicon.ico') {
