@@ -14,12 +14,11 @@ function start(apikey, port) {
     function onRequest(request, response) {
 
         var query = url.parse(request.url, true).query;
-        var path = query.path;// + '?apikey=' + key;
+        var path = query.path + '?apikey=' + key;
 
 	// make a request to espn
 	var options = {
-	    //host: 'api.espn.com',
-            host: 'api.twitch.tv',
+	    host: 'api.espn.com',
             path: path,
             headers: {'Accept': 'application/json'}
 	};
