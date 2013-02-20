@@ -4,42 +4,28 @@
 
 var http = require("http");
 var url = require("url");
+var nba_scraper = require('./nba_scraper').nba_scraper;
 var result = ''; 
-var key;
 
-function start(apikey, port) {
+function start(port) {
     
-    key = apikey;
-
     function onRequest(request, response) {
 
         var query = url.parse(request.url, true).query;
-        var path = query.path + '?apikey=' + key;
+        var sport = query.sport;	
+        var team = query.team;
 
-	// make a request to espn
-	var options = {
-	    host: 'api.espn.com',
-            path: path,
-            headers: {'Accept': 'application/json'}
-	};
-
-	callback = function(r) {
-	    var str = '';
-	    
-	    r.on('data', function(chunk) {
-		str += chunk;
-	    });
-
-	    r.on('end', function () {
-		result = str;
-
-                // write the respose back to the original recipient
-		response.writeHead(200, {"Content-Type": "application/json"});
-		response.write(result);
-		response.end();
-	    });
-	}
-	http.request(options, callback).end();
+        // check sport, and make request
+        if (sport === 'nba') {
+            nba_scraper.get_roster(team, response);     
+        }
+        else {
+            // write error if sport not found
+            console.log("Sport not implemented yet");
+            response.writeHead(200, {"Content-Type": "text/plain"});
+	    response.write("sport not implemented");
+            response.end();
+        }
     }
 
     http.createServer(function(q, r) {

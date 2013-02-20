@@ -2,6 +2,8 @@
   "name": "RosterViewer",
   "version": "0.0.1",
   "dependencies": {
+   "jsdom": "0.5.x",
+   "request": "2.14.x"
   },
   "engines": {
     "node": "0.8.x",

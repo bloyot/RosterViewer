@@ -5,7 +5,6 @@
 var server = require("./server");
 var fs = require('fs');
 
-var apikey = process.env.apikey || '';
 var port = process.env.PORT || 8888;
 
-server.start(apikey, port);
+server.start(port);
