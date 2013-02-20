@@ -33,12 +33,13 @@ nba_scraper.get_roster = function (team, parent_res) {
 		 
                  // loop while looking for the right team 
 		 while (teams.eq(i).length) {
-		     if (teams.eq(i++).html() === team) {
+		     if (teams.eq(i).html() === team) {
                         parent_res.writeHead(200, {"Content-Type": "text/plain"});
-		        parent_res.write(rosters.eq(i++).html());
+		        parent_res.write(rosters.eq(i).html());
 			parent_res.end();
                         return;
 		     }
+                     i += 1;
 		 }
                   
                  // handle case where you don't find the team 
