@@ -16,7 +16,7 @@ function start(port) {
         var team = query.team;
 
         // check sport, and make request
-        if (sport === 'nba') {
+        if (sport === 'basketball') {
             nba_scraper.get_roster(team, response);     
         }
         else {
