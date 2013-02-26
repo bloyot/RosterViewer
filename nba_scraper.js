@@ -61,17 +61,19 @@ nba_scraper.get_roster = function(team, parent_res) {
 
 nba_scraper.get_teams = function(parent_res) {
 
+    var http = require('http'); 
+
     var options = {
-        host: 'http://api.espn.com',
+        host: 'api.espn.com',
 	path: '/v1/sports/basketball/nba/teams?apikey=' + process.env.apikey
     };  
 
     callback = function(response) {
-	var str = '';
+	var result = '';
 
 	//another chunk of data has been recieved, so append it to `str`
 	response.on('data', function (chunk) {
-	  str += chunk;
+	  result += chunk;
 	});
 
 	//the whole response has been recieved, so we just print it out here
@@ -81,6 +83,8 @@ nba_scraper.get_teams = function(parent_res) {
             parent_res.end();
         });
     } 
+
+    http.request(options, callback).end(); 
 }
 
 exports.nba_scraper = nba_scraper; 
