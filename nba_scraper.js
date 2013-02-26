@@ -29,9 +29,9 @@ nba_scraper.get_roster = function(team, parent_res) {
 
 		 var i = 0, rosters;
                  var result = "";
-		 rosters = $('td');
-		 
-                 parent_res.writeHead(200, {"Content-Type": "text/plain"});
+		 rosters = $('.feeds-roster td');
+                 
+	       	 parent_res.writeHead(200, {"Content-Type": "text/plain"});
 
                  // loop to build the entire roster from td elements
                  // builds a whole players info then writes the result 
