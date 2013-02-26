@@ -11,6 +11,8 @@ function start(port) {
     
     function onRequest(request, response) {
 
+        var parsed_url = url.parse(request.url, true);
+     
         // catch the annoying favicon request
 	if (request.url === '/favicon.ico') {
 	    response.writeHead(200, {'Content-Type': 'image/x-icon'});
@@ -27,7 +29,18 @@ function start(port) {
             return;
         }
 
-	var query = url.parse(request.url, true).query;
+        // make request to get stats
+        if (parsed_url.pathname === '/stats') {
+            var team = parsed_url.query.team;
+           
+            nba_scraper.get_stats(team, response);
+            
+            return;
+        }
+
+        // change so it has its own check rather than defaulting on '/' path TODO
+    
+	var query = parsed_url.query;
         var sport = query.sport;	
         var team = query.team;
 
