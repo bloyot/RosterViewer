@@ -59,5 +59,29 @@ nba_scraper.get_roster = function(team, parent_res) {
         });
 }
 
+nba_scraper.get_teams = function(parent_res) {
+
+    var options = {
+        host: 'api.espn.com',
+	path: '/v1/sports/basketball/nba/teams?apikey=' + process.env.KEY
+    };  
+
+    callback = function(response) {
+	var str = '';
+
+	//another chunk of data has been recieved, so append it to `str`
+	response.on('data', function (chunk) {
+	  str += chunk;
+	});
+
+	//the whole response has been recieved, so we just print it out here
+	response.on('end', function () {
+	    parent_res.writeHead(200, {"Content-Type": "text/plain"});
+            parent_res.write(result);
+            parent_res.end();
+        });
+    } 
+}
+
 exports.nba_scraper = nba_scraper; 
 

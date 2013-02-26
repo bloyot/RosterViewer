@@ -19,6 +19,14 @@ function start(port) {
 	    return;
 	}
 
+        // make request to get teams
+        if (request.url === '/teams') {
+           
+            // cache this TODO 
+            nba_scraper.get_teams(response);
+            return;
+        }
+
 	var query = url.parse(request.url, true).query;
         var sport = query.sport;	
         var team = query.team;
