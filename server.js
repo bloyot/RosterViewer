@@ -11,7 +11,15 @@ function start(port) {
     
     function onRequest(request, response) {
 
-        var query = url.parse(request.url, true).query;
+        // catch the annoying favicon request
+	if (request.url === '/favicon.ico') {
+	    response.writeHead(200, {'Content-Type': 'image/x-icon'});
+	    response.end();
+	    console.log('favicon caught');
+	    return;
+	}
+
+	var query = url.parse(request.url, true).query;
         var sport = query.sport;	
         var team = query.team;
 
@@ -28,19 +36,7 @@ function start(port) {
         }
     }
 
-    http.createServer(function(q, r) {
-        
-        // catch the annoying favicon request
-	if (q.url === '/favicon.ico') {
-	    r.writeHead(200, {'Content-Type': 'image/x-icon'});
-	    r.end();
-	    console.log('favicon caught');
-	    return;
-	}
-
-	onRequest(q, r);
-
-    }).listen(port);
+    http.createServer(onRequest).listen(port);
 }
 
 exports.start = start;
