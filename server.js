@@ -31,10 +31,9 @@ function start(port) {
 
         // make request to get stats
         if (parsed_url.pathname === '/stats') {
-            var team = parsed_url.query.team;
-           
-            nba_scraper.get_stats(team, response);
             
+            var team = parsed_url.query.team;
+            nba_scraper.get_stats(team, response);
             return;
         }
 

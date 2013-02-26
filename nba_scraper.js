@@ -138,6 +138,7 @@ nba_scraper.get_stats = function(team, parent_res) {
                      }
 		     i += 1; 
                  }
+
                  parent_res.end();
 	    });
         });
