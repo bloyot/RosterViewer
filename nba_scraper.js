@@ -62,8 +62,8 @@ nba_scraper.get_roster = function(team, parent_res) {
 nba_scraper.get_teams = function(parent_res) {
 
     var options = {
-        host: 'api.espn.com',
-	path: '/v1/sports/basketball/nba/teams?apikey=' + process.env.KEY
+        host: 'http://api.espn.com',
+	path: '/v1/sports/basketball/nba/teams?apikey=' + process.env.apikey
     };  
 
     callback = function(response) {
