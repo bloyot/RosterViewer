@@ -8,13 +8,15 @@ var nba_scraper = {}
 nba_scraper.roster_fields = 8;
 nba_scraper.stats_fields = 16;
 
-nba_scraper.get_roster = function(team, parent_res) {
+nba_scraper.get_roster = function(team, parent_res, cache) {
      
     var request = require('request'),
     jsdom = require('jsdom');
-   
-    // http request to get the rosters, change 2012 to variable TODO, 
-    request({ uri:'http://www.nba.com/' + team + '/roster/2012' },  
+  
+    var cache_string = '';
+ 
+    // http request to get the rosters 
+    request({ uri:'http://www.nba.com/' + team + '/roster/' + getSeasonYear() },  
         function (error, response, body) {
 	    if (error && response.statusCode !== 200) {
 	      console.log('Error when contacting site ');
@@ -49,52 +51,62 @@ nba_scraper.get_roster = function(team, parent_res) {
                      if (i % nba_scraper.roster_fields === nba_scraper.roster_fields-1) {
                          result = result + "\n";
 			 parent_res.write(result);
+                         cache_string = cache_string + result;
 			 result = ""; 
                      }
                      i += 1;
 		 }
-                
+		 // else cache and write response as normal 
+		 cache.rosters[team] = {};
+		 cache.rosters[team].data = cache_string;
+		 cache.rosters[team].last_check = Date.now();       
                  parent_res.end();
                   
 	    });
         });
 }
 
-nba_scraper.get_teams = function(parent_res) {
+nba_scraper.get_teams = function(parent_res, cache) {
 
-    var http = require('http'); 
+    var request = require('request');
 
-    var options = {
-        host: 'api.espn.com',
-	path: '/v1/sports/basketball/nba/teams?apikey=' + process.env.apikey
-    };  
+    // on callback write the body and cache the result
+    var callback = function(error, response, body) {
 
-    callback = function(response) {
-	var result = '';
+        var JSON_body = JSON.parse(body);
 
-	//another chunk of data has been recieved, so append it to `str`
-	response.on('data', function (chunk) {
-	  result += chunk;
-	});
-
-	//the whole response has been recieved, so we just print it out here
-	response.on('end', function () {
+        // handle error case, write back an empty string, so 
+        // as not to break app
+        if (JSON_body.status === "error") {
+            console.log("Error, code: " + JSON_body.code + "\n" 
+                    + "Message: " + JSON_body.message); 
 	    parent_res.writeHead(200, {"Content-Type": "text/plain"});
-            parent_res.write(result);
-            parent_res.end();
-        });
-    } 
+	    parent_res.write("");
+	    parent_res.end();  
+            return;  
+        }
+        // else cache and write response as normal 
+        cache.teams = {};
+        cache.teams.data = body;
+        cache.teams.last_check = Date.now();
 
-    http.request(options, callback).end(); 
+	parent_res.writeHead(200, {"Content-Type": "text/plain"});
+	parent_res.write(body);
+	parent_res.end();
+    }
+
+    // make the request
+    request({ uri: 'http://api.espn.com/v1/sports/basketball/nba/teams?apikey='
+	    + process.env.apikey }, callback);
 }
 
-nba_scraper.get_stats = function(team, parent_res) {
+nba_scraper.get_stats = function(team, parent_res, cache) {
 
     var request = require('request'),
     jsdom = require('jsdom');
    
-    // http request to get the teams, change 2012 to variable TODO, 
-    request({ uri:'http://www.nba.com/' + team + '/stats/2012' },  
+    // http request to get the teams 
+    request({ uri:'http://www.nba.com/' + team + '/stats/' + getSeasonYear() },  
         function (error, response, body) {
 	    if (error && response.statusCode !== 200) {
 	      console.log('Error when contacting site ');
@@ -110,6 +122,7 @@ nba_scraper.get_stats = function(team, parent_res) {
 
 		 var i = 0, rosters;
                  var result = "";
+                 var cache_string = "";
 		 rosters = $('.feeds-stats td');
                  
 	         parent_res.writeHead(200, {"Content-Type": "text/plain"});
@@ -134,14 +147,38 @@ nba_scraper.get_stats = function(team, parent_res) {
                      if (i % nba_scraper.stats_fields === nba_scraper.stats_fields-1) {
                          result = result + "\n";
                          parent_res.write(result);
+                         cache_string = cache_string + result;
                          result = "";
                      }
 		     i += 1; 
                  }
-
+                 cache.stats[team] = {};
+                 cache.stats[team].data = cache_string;
+                 cache.stats[team].last_check = Date.now();
                  parent_res.end();
 	    });
         });
+}
+
+// helper functions
+
+// Gets the year to use for the nba.com requests.
+// This is the year when the season started, so in december of 
+// 2012 this is 2012, but then next month in january 2013 it is still 2012,
+// up until halfway through oct, right before the new season starts
+function getSeasonYear() {
+    var now = new Date();
+    var year = now.getFullYear();
+    var month = now.getMonth();
+    var day = now.getDate();
+
+    if (month >= 0 && month < 9) {
+        return (year-1);
+    }
+    if (month === 9 && day < 20) {
+        return (year-1);
+    }
+    return year;
 }
 
 exports.nba_scraper = nba_scraper; 
